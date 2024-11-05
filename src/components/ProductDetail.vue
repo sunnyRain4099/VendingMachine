@@ -13,47 +13,32 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import NavBar from './NavBar.vue'
 
-export default {
-  name: 'ProductDetail',
-  components: {
-    NavBar
-  },
-  data() {
-    return {
-      product: null
-    }
-  },
-  created() {
-    this.fetchProduct()
-  },
-  methods: {
-    async fetchProduct() {
-      const id = this.$route.params.id
-      try {
-        const response = await axios.get(`http://localhost:8080/user/product/${id}`)
-        if (response.data.data) {
-          this.product = response.data.data
-        } else {
-          console.error('没有收到产品数据')
-        }
-      } catch (error) {
-        console.error('在获取产品时出错:', error)
-      }
-    },
-    goToBuyPage() {
-      if (this.product && this.product.id) {
-    this.$router.push(`/buy/${this.product.id}`);
-  } else {
-    console.error('产品未加载，无法跳转到购买页面');
-    // 这里可以添加一个错误处理，例如显示一个消息给用户
-  }
-    }
+const product = ref(null)
+
+const fetchProduct = async () => {
+  const id = window.location.pathname.split('/').pop()
+  try {
+    const response = await axios.get(`http://localhost:8080/user/product/${id}`)
+    product.value = response.data.data
+  } catch (error) {
+    console.error('There was an error fetching the product:', error)
   }
 }
+
+const goToBuyPage = () => {
+  if (product.value && product.value.id) {
+    window.location.href = `/buy/${product.value.id}`
+  } else {
+    console.error('产品未加载，无法跳转到购买页面')
+  }
+}
+
+onMounted(fetchProduct)
 </script>
 
 <style>
