@@ -24,7 +24,7 @@
         quantity: 1
       }
     },
-    created() {
+    mounted() {
       this.fetchProduct()
     },
     methods: {
@@ -37,21 +37,7 @@
           console.error('There was an error fetching the product:', error)
         }
       },
-      submitOrder() {
-        const data = {
-          product_id: this.product.id,
-          quantity: this.quantity,
-          total_price: this.product.price * this.quantity
-        }
-        axios.post('http://localhost:8080/user/sell', data)
-          .then(() => {
-            alert('购买成功！')
-            this.$router.push('/')
-          })
-          .catch(error => {
-            console.error('There was an error submitting the order:', error)
-          })
-      }
+
     }
   }
   </script>

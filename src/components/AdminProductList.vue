@@ -34,7 +34,8 @@
           name: '',
           price: 0,
           stock: 0
-        }
+        },
+        token: localStorage.getItem('token')
       }
     },
     created() {
@@ -43,15 +44,19 @@
     methods: {
       async fetchProducts() {
         try {
-          const response = await axios.get('http://localhost:8080/admin/list')
+          const response = await axios.get('http://localhost:8080/admin/list', {headers: {
+            token: this.token
+          }})
           this.products = response.data.data
         } catch (error) {
           console.error('There was an error fetching the products:', error)
         }
       },
-      async deleteProduct(id) {
+      async deleteProduct(id) { 
         try {
-          await axios.delete(`http://localhost:8080/admin/${id}`)
+          await axios.delete(`http://localhost:8080/admin/${id}` , {headers: {
+            token: this.token
+          }})
           this.products = this.products.filter(product => product.id !== id)
         } catch (error) {
           console.error('There was an error deleting the product:', error)
@@ -59,7 +64,11 @@
       },
       async createProduct() {
         try {
-          const response = await axios.post('http://localhost:8080/admin', this.newProduct)
+          const response = await axios.post('http://localhost:8080/admin', {
+            ... this.newProduct
+          }, {headers: {
+            token: this.token
+          }})
           this.products.push(response.data.data)
           this.newProduct.name = ''
           this.newProduct.price = 0

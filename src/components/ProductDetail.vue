@@ -5,7 +5,7 @@
     <div v-if="product" class="product-detail-info">
       <p>{{ product.name }} - {{ product.price }}元</p>
       <p>库存：{{ product.stock }}</p>
-      <button v-if="product" @click="goToBuyPage" class="buy-button">购买</button>
+      <button v-if="product" @click="submitOrder" class="buy-button">购买</button>
     </div>
     <div v-else>
       <p>加载中...</p>
@@ -27,7 +27,7 @@ export default {
       product: null
     }
   },
-  created() {
+  mounted() {
     this.fetchProduct()
   },
   methods: {
@@ -37,6 +37,7 @@ export default {
         const response = await axios.get(`http://localhost:8080/user/product/${id}`)
         if (response.data.data) {
           this.product = response.data.data
+          console.log(this.product)
         } else {
           console.error('没有收到产品数据')
         }
@@ -44,23 +45,32 @@ export default {
         console.error('在获取产品时出错:', error)
       }
     },
-    goToBuyPage() {
-      if (this.product && this.product.id) {
-    this.$router.push(`/buy/${this.product.id}`);
-  } else {
-    console.error('产品未加载，无法跳转到购买页面');
-    // 这里可以添加一个错误处理，例如显示一个消息给用户
-  }
-    }
+    submitOrder() {
+      const data = {
+        product_id: this.product.id,
+        quantity: this.quantity,
+        total_price: this.product.price * this.quantity
+      }
+      axios.post('http://localhost:8080/user/sell', data)
+        .then(() => {
+          alert('购买成功！')
+          this.$router.push('/')
+        })
+        .catch(error => {
+          console.error('There was an error submitting the order:', error)
+        })
+    },
   }
 }
 </script>
 
 <style>
 .product-detail-container {
-  max-width: 800px;
+  max-width: 500px;
   margin: 0 auto;
   padding: 20px;
+  background-color: #fff;
+  border-radius: 20px;
 }
 
 .product-detail-title {
