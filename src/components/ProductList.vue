@@ -66,9 +66,11 @@ export default {
       try {
         const response = await axios.get('http://localhost:8080/user/categories')
         this.categories = response.data.data
+        const promiseList = []
         this.categories.forEach(category => {
-          this.fetchProducts(category.id)
+          promiseList.push(this.fetchProducts(category.id))
         })
+        Promise.all(promiseList)
       } catch (error) {
         console.error('There was an error fetching the products:', error)
       }
@@ -108,7 +110,7 @@ export default {
       })
       console.log(productList)
       await this.apiBuyAll(productList)
-      await this.fetchcategoryAndProducts()
+      this.fetchcategoryAndProducts()
     }
   }
 }
