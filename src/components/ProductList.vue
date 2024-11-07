@@ -1,13 +1,16 @@
 <template>
   <div class="product-list-container">
     <NavBar />
-    <h1 class="product-list-title">商品列表</h1>
+    <h1 v-for="category in categories" :key="category.id" @click="() => {
+      this.activeId = category.id
+    }" :class="{'product-list-title': true, 'active-title': category.id === this.activeId}">{{ category.name }}</h1>
     <ul class="product-list">
       <li v-for="product in products" :key="product.id" class="product-item">
         <div class="product-info">
           <span>名称：{{ product.name }}</span>
           <span> {{ product.price }}元</span>
-          <router-link :to="`/product/${product.id}`" class="detail-link">详情</router-link>
+          <img :src="product.url" alt="">
+          <router-link :to="`/product/${product.id}`" class="detail-link">购买</router-link>
         </div>
       </li>
     </ul>
@@ -25,17 +28,35 @@ export default {
   },
   data() {
     return {
-      products: []
+      products: [],
+      categories: [],
+      activeId: 1
+    }
+  },
+  watch: {
+    activeId: {
+      immediate: true,
+      handler(newId) {
+        this.fetchProducts(newId)
+      }
     }
   },
   created() {
-    this.fetchProducts()
+    this.fetchcategory()
   },
   methods: {
-    async fetchProducts() {
+    async fetchProducts(id) {
       try {
-        const response = await axios.get('http://localhost:8080/user/list')
+        const response = await axios.get(`http://localhost:8080/user/getProductByCategoryId/${id}`)
         this.products = response.data.data
+      } catch (error) {
+        console.error('There was an error fetching the products:', error)
+      }
+    },
+    async fetchcategory() {
+      try {
+        const response = await axios.get('http://localhost:8080/user/categories')
+        this.categories = response.data.data
       } catch (error) {
         console.error('There was an error fetching the products:', error)
       }
@@ -58,8 +79,20 @@ body{
 }
 
 .product-list-title {
+  display: inline-block;
   text-align: center;
   color: #fff;
+  padding: 0 2px;
+  border-radius: 10px;
+  margin-right: 10px;
+  background-color: #007bff;
+  cursor: pointer;
+}
+.active-title {
+  background-color: pink;
+}
+.product-list-title:active {
+  transform: scale(1.1);
 }
 
 .product-list {
@@ -82,6 +115,13 @@ body{
   display: flex;
   flex-direction: column;
   align-items: center;
+  img {
+    max-width: 180px; /* 设置最大宽度 */
+    max-height: 180px; /* 设置最大高度 */
+    width: auto; /* 根据实际图片宽高比自动调整 */
+    height: auto; /* 根据实际图片宽高比自动调整 */
+    border-radius: 8px; /* 可选，添加圆角 */
+  }
 }
 
 .detail-link {
