@@ -7,15 +7,18 @@
     <ul class="product-list">
       <li v-for="product in products" :key="product.id" class="product-item">
         <div class="product-info">
+          <!-- Quantity Badge -->
+          <span :class="{'quantity-badge': true, 'red': product.num}">{{ product.num || 0 }}</span>
           <span>名称：{{ product.name }}</span>
           <span>剩余：{{ product.stock }}</span>
           <span>已售：{{ product.sales }}</span>
           <span> {{ product.price }}元</span>
           <img :src="product.url" alt="">
-          <router-link :to="`/product/${product.id}`" class="detail-link">购买</router-link>
+          <span class="detail-link"><button @click="clickhhh(false, product)" class="btn"> - 1</button> <button @click="clickhhh(true, product)" class="btn"> + 1</button></span>
         </div>
       </li>
     </ul>
+    <button class="buyAll" @click="buyAll">购 买</button>
   </div>
 </template>
 
@@ -32,36 +35,80 @@ export default {
     return {
       products: [],
       categories: [],
-      activeId: 1
+      activeId: 1,
+      buyerList: [],
+      productMap: {}
     }
   },
   watch: {
     activeId: {
       immediate: true,
       handler(newId) {
-        this.fetchProducts(newId)
+        console.log(this.productMap, newId);
+        this.products = this.productMap[newId];
       }
     }
   },
   created() {
-    this.fetchcategory()
+    this.fetchcategoryAndProducts()
   },
   methods: {
     async fetchProducts(id) {
       try {
         const response = await axios.get(`http://localhost:8080/user/getProductByCategoryId/${id}`)
-        this.products = response.data.data
+        this.productMap[id] =  response.data.data
+        this.products = this.productMap[1];
       } catch (error) {
         console.error('There was an error fetching the products:', error)
       }
     },
-    async fetchcategory() {
+    async fetchcategoryAndProducts() {
       try {
         const response = await axios.get('http://localhost:8080/user/categories')
         this.categories = response.data.data
+        this.categories.forEach(category => {
+          this.fetchProducts(category.id)
+        })
       } catch (error) {
         console.error('There was an error fetching the products:', error)
       }
+    },
+    async clickhhh (isAdd, product) {
+      console.log('dd')
+      if(isAdd) {
+        if(!product.num) product.num = 0
+        product.num = product.num < product.stock ? product.num + 1 : product.num
+      } else {
+        product.num = product.num ? product.num - 1 : 0
+      }
+    },
+    apiBuy(product) {
+      const data = {
+        product_id: product.id,
+        quantity: product.num,
+        total_price: product.price * product.num
+      }
+      axios.post('http://localhost:8080/user/sell', data)
+    },
+    async apiBuyAll (productList) {
+      const promiseList = []
+      productList.forEach(product => {
+        promiseList.push(this.apiBuy(product))
+      })
+      Promise.all(productList)
+    },
+    async buyAll () {
+      const productList = []
+      this.categories.forEach(category => {
+        this.productMap[category.id].forEach(product => {
+          if(product.num) {
+            productList.push(product)
+          }
+        })
+      })
+      console.log(productList)
+      await this.apiBuyAll(productList)
+      await this.fetchcategoryAndProducts()
     }
   }
 }
@@ -106,6 +153,7 @@ body{
 }
 
 .product-item {
+  position: relative; /* Enable positioning for the badge */
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -113,27 +161,73 @@ body{
   transition: background-color 0.3s ease;
 }
 
+.quantity-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: gray;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 50%;
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.red {
+  background-color: red;
+}
+
 .product-info {
   display: flex;
   flex-direction: column;
   align-items: center;
-  img {
-    max-width: 180px; /* 设置最大宽度 */
-    max-height: 180px; /* 设置最大高度 */
-    width: auto; /* 根据实际图片宽高比自动调整 */
-    height: auto; /* 根据实际图片宽高比自动调整 */
-    border-radius: 8px; /* 可选，添加圆角 */
-  }
+}
+
+.product-info img {
+  max-width: 180px;
+  max-height: 180px;
+  width: auto;
+  height: auto;
+  border-radius: 8px;
 }
 
 .detail-link {
   margin-top: 10px;
-  color: #007bff;
+  color: #fff;
   text-decoration: none;
+  .btn {
+    background-color: #007bff;
+    cursor: pointer;
+    padding: 5px 18px;
+    border-radius: 5px;
+    border: 0;
+    color: #fff;
+    font-size: 20px;
+  }
+  .btn:active {
+    transform: scale(0.9);
+  }
 }
+
 
 .detail-link:hover {
   text-decoration: underline;
+}
+.buyAll {
+  height: 80px;
+  width: 200px;
+  background-color: #007bff;
+  font-size: 40px;
+  font-weight: 800;
+  color: #fff;
+  border: 0;
+  cursor: pointer;
+  border-radius: 20px
+}
+.buyAll:active {
+  transform: scale(0.9);
 }
 </style>
 
