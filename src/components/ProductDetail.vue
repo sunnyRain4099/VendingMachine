@@ -48,8 +48,8 @@ export default {
     submitOrder() {
       const data = {
         product_id: this.product.id,
-        quantity: this.quantity,
-        total_price: this.product.price * this.quantity
+        quantity: 1,
+        total_price: this.product.price
       }
       axios.post('http://localhost:8080/user/sell', data)
         .then(() => {

@@ -16,7 +16,7 @@
         <input v-model="newProduct.stock" type="number" placeholder="库存">
         
         <!-- 添加商品类型的选择框 -->
-        <select v-model="newProduct.categoryId">
+        <select v-model="newProduct.category_id">
           <option value="" disabled>选择商品类型</option>
           <option v-for="category in categories" :key="category.id" :value="category.id">
             {{ category.name }}
@@ -48,7 +48,8 @@ export default {
         price: '',
         stock: '',
         url: '',
-        categoryId: '' // 添加商品类型 ID
+        sales: 0,
+        category_id: '' // 添加商品类型 ID
       },
       token: localStorage.getItem('token'),
       file: undefined
@@ -112,7 +113,7 @@ export default {
         this.products.push(response.data.data);
         
         // 重置表单
-        this.newProduct = { name: '', price: 0, stock: 0, url: '', categoryId: '' };
+        this.newProduct = { name: '', price: 0, stock: 0, url: '', category_id: '' };
         this.file = undefined;
         
       } catch (error) {

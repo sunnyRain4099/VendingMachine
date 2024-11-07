@@ -8,6 +8,8 @@
       <li v-for="product in products" :key="product.id" class="product-item">
         <div class="product-info">
           <span>名称：{{ product.name }}</span>
+          <span>剩余：{{ product.stock }}</span>
+          <span>已售：{{ product.sales }}</span>
           <span> {{ product.price }}元</span>
           <img :src="product.url" alt="">
           <router-link :to="`/product/${product.id}`" class="detail-link">购买</router-link>
