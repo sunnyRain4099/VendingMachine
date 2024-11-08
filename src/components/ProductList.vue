@@ -84,20 +84,20 @@ export default {
         product.num = product.num ? product.num - 1 : 0
       }
     },
-    apiBuy(product) {
+    async apiBuy(product) {
       const data = {
         product_id: product.id,
         quantity: product.num,
         total_price: product.price * product.num
       }
-      axios.post('http://localhost:8080/user/sell', data)
+      await axios.post('http://localhost:8080/user/sell', data)
     },
     async apiBuyAll (productList) {
       const promiseList = []
       productList.forEach(product => {
         promiseList.push(this.apiBuy(product))
       })
-      Promise.all(productList)
+      await Promise.all(promiseList)
     },
     async buyAll () {
       const productList = []
@@ -108,7 +108,6 @@ export default {
           }
         })
       })
-      console.log(productList)
       await this.apiBuyAll(productList)
       this.fetchcategoryAndProducts()
     }
