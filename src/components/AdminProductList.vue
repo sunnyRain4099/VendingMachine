@@ -23,8 +23,8 @@
           </option>
         </select>
         
-        <input type="file" accept="image/*" @change="handleFileChange">
-        <button type="submit">创建商品</button>
+        <input id="fileInput" type="file" accept="image/*" @change="handleFileChange">
+        <button type="submit" >创建商品</button>
       </form>
     </div>
   </div>
@@ -52,7 +52,7 @@ export default {
         category_id: '' // 添加商品类型 ID
       },
       token: localStorage.getItem('token'),
-      file: undefined
+      file: undefined,
     }
   },
   created() {
@@ -60,6 +60,11 @@ export default {
     this.fetchCategories();
   },
   methods: {
+    transShowFile () {
+      const fileInput = document.querySelector('#fileInput')
+      fileInput.value = ''
+    }
+    ,
     async fetchProducts() {
       try {
         const response = await axios.get('http://localhost:8080/admin/list', {
@@ -113,7 +118,8 @@ export default {
         this.products.push(response.data.data);
         
         // 重置表单
-        this.newProduct = { name: '', price: 0, stock: 0, url: '', category_id: '' };
+        this.newProduct = { name: '', price: null, stock: null, url: '', category_id: '' };
+        this.transShowFile()
         this.file = undefined;
         
       } catch (error) {
@@ -132,25 +138,28 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 100vh; /* 使导航栏固定在页面顶部 */
+  
 }
 
 .body-s {
   background-color: #fff;
-  max-width: 500px;
+  max-width: 600px; /* 稍微增加宽度以适应内容 */
   padding: 20px;
   border-radius: 10px;
-  margin-top: 100px;
+  margin-top: 50px; /* 调整顶部边距以适应导航栏 */
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
-  font-size: 1.8rem;
-  margin-bottom: 1rem;
+  font-size: 2rem; /* 增加标题大小 */
+  margin-bottom: 1.5rem; /* 增加底部边距 */
+  color: #333; /* 深色字体以增加对比 */
 }
 
 button {
   margin-top: 1rem;
-  padding: 10px 20px;
+  padding: 12px 24px; /* 增加按钮大小 */
   font-size: 1rem;
   border: none;
   border-radius: 5px;
@@ -166,14 +175,39 @@ button:hover {
 
 input, select {
   width: 100%;
-  padding: 8px;
-  margin: 8px 0;
+  padding: 10px; /* 增加输入框内边距 */
+  margin: 10px 0;
   font-size: 1rem;
   border: 1px solid #ddd;
   border-radius: 5px;
 }
 
 input[type="file"] {
-  padding: 3px;
+  padding: 5px; /* 调整文件输入框内边距 */
+}
+
+ul {
+  list-style: none; /* 移除列表默认样式 */
+  padding: 0; /* 移除默认内边距 */
+}
+
+li {
+  padding: 10px; /* 增加列表项内边距 */
+  border-bottom: 1px solid #eee; /* 底部边框以分隔列表项 */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+li:last-child {
+  border-bottom: none; /* 最后一个列表项不显示底部边框 */
+}
+
+button.delete {
+  background-color: #ff4136; /* 删除按钮的颜色 */
+}
+
+button.delete:hover {
+  background-color: #d32f2f; /* 删除按钮的悬停颜色 */
 }
 </style>
