@@ -34,7 +34,7 @@ export default {
     async fetchProduct() {
       const id = this.$route.params.id
       try {
-        const response = await axios.get(`http://localhost:8080/user/product/${id}`)
+        const response = await axios.get(`/api/user/product/${id}`)
         if (response.data.data) {
           this.product = response.data.data
           console.log(this.product)
@@ -51,7 +51,7 @@ export default {
         quantity: 1,
         total_price: this.product.price
       }
-      axios.post('http://localhost:8080/user/sell', data)
+      axios.post('/api/user/sell', data)
         .then(() => {
           alert('购买成功！')
           this.$router.push('/')

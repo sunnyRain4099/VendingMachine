@@ -31,7 +31,7 @@
       async fetchProduct() {
         const id = this.$route.params.id
         try {
-          const response = await axios.get(`http://localhost:8080/user/product/${id}`)
+          const response = await axios.get(`/api/user/product/${id}`)
           this.product = response.data.data
         } catch (error) {
           console.error('There was an error fetching the product:', error)

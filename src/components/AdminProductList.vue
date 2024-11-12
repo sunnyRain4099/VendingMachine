@@ -67,7 +67,7 @@ export default {
     ,
     async fetchProducts() {
       try {
-        const response = await axios.get('http://localhost:8080/admin/list', {
+        const response = await axios.get('/api/admin/list', {
           headers: { token: this.token }
         });
         this.products = response.data.data;
@@ -77,7 +77,7 @@ export default {
     },
     async fetchCategories() {
       try {
-        const response = await axios.get('http://localhost:8080/user/categories');
+        const response = await axios.get('/api/user/categories');
         this.categories = response.data.data;
       } catch (error) {
         console.error('There was an error fetching the categories:', error);
@@ -85,7 +85,7 @@ export default {
     },
     async deleteProduct(id) { 
       try {
-        await axios.delete(`http://localhost:8080/admin/${id}`, {
+        await axios.delete(`/api/admin/${id}`, {
           headers: { token: this.token }
         });
         this.products = this.products.filter(product => product.id !== id);
@@ -98,7 +98,7 @@ export default {
         // 上传文件
         const formData = new FormData();
         formData.append('file', this.file);
-        const uploadResponse = await axios.post('http://localhost:8080/admin/upload', formData, {
+        const uploadResponse = await axios.post('/api/admin/upload', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             token: this.token
@@ -109,7 +109,7 @@ export default {
         this.newProduct.url = uploadResponse.data.data;
         console.log(this.newProduct, '上传')
         // 创建商品
-        const response = await axios.post('http://localhost:8080/admin', {
+        const response = await axios.post('/api/admin', {
           ...this.newProduct
         }, {
           headers: { token: this.token }

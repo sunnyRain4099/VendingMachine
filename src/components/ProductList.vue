@@ -55,7 +55,7 @@ export default {
   methods: {
     async fetchProducts(id) {
       try {
-        const response = await axios.get(`http://localhost:8080/user/getProductByCategoryId/${id}`)
+        const response = await axios.get(`/api/user/getProductByCategoryId/${id}`)
         this.productMap[id] =  response.data.data
         this.products = this.productMap[1];
       } catch (error) {
@@ -64,7 +64,7 @@ export default {
     },
     async fetchcategoryAndProducts() {
       try {
-        const response = await axios.get('http://localhost:8080/user/categories')
+        const response = await axios.get('/api/user/categories')
         this.categories = response.data.data
         const promiseList = []
         this.categories.forEach(category => {
@@ -90,7 +90,7 @@ export default {
         quantity: product.num,
         total_price: product.price * product.num
       }
-      await axios.post('http://localhost:8080/user/sell', data)
+      await axios.post('/api/user/sell', data)
     },
     async apiBuyAll (productList) {
       const promiseList = []

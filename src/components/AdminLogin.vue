@@ -36,7 +36,7 @@
           password: this.password
         }
         try {
-          const response = await axios.post('http://localhost:8080/admin/login', data)
+          const response = await axios.post('/api/admin/login', data)
           localStorage.setItem('token', response.data.data.token)
           this.$router.push('/admin')
         } catch (error) {

@@ -1,7 +1,14 @@
-const { defineConfig } = require('@vue/cli-service')
-module.exports = defineConfig({
-  transpileDependencies: true,
+module.exports = {
   devServer: {
-    port: 8081,
+    proxy: {
+      // 匹配 "/api" 开头的请求路径
+      '/api': {
+        target: '/api', // 目标服务器地址
+        pathRewrite: { '^/api': '' },
+        changeOrigin: true,             // 是否修改请求的源头，设置为 true 时代理服务器会修改请求头的 Host
+        secure: false,                  // 如果是 https 接口，需要配置为 false
+        logLevel: 'debug', // 启用调试日志
+      },
+    },
   },
-})
+};

@@ -35,7 +35,7 @@ onMounted(async () => {
 async function fetchProduct() {
   const id = 'your-product-id'; // 这里应该使用路由参数获取产品ID
   try {
-    const response = await axios.get(`http://localhost:8080/user/product/${id}`);
+    const response = await axios.get(`/api/user/product/${id}`);
     product.value = response.data.data;
   } catch (error) {
     console.error('There was an error fetching the product:', error);
@@ -56,7 +56,7 @@ async function purchase() {
   };
 
   try {
-    await axios.post('http://localhost:8080/user/sell', data);
+    await axios.post('/api/user/sell', data);
     alert('购买成功');
     // 可以在这里添加逻辑，比如清空表单或跳转到其他页面
   } catch (error) {
