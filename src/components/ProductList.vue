@@ -98,6 +98,7 @@ export default {
         promiseList.push(this.apiBuy(product))
       })
       await Promise.all(promiseList)
+      
     },
     async buyAll () {
       const productList = []
@@ -109,6 +110,7 @@ export default {
         })
       })
       await this.apiBuyAll(productList)
+      alert('购买成功')
       this.fetchcategoryAndProducts()
     }
   }
