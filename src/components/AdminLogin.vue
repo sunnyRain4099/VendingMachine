@@ -25,8 +25,8 @@
     },
     data() {
       return {
-        username: 'root',
-        password: '123456'
+        username: 'ybf',
+        password: '54188'
       }
     },
     methods: {
